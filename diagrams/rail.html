@@ -1,0 +1,280 @@
+
+<!-- This is a generated file -->
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+  body {
+    background-color: hsl(30, 20%, 95%)
+  }
+</style>
+
+
+<link rel='stylesheet' href='https://unpkg.com/chevrotain@4.3.3/diagrams/diagrams.css'>
+
+<script src='https://unpkg.com/chevrotain@4.3.3/diagrams/vendor/railroad-diagrams.js'></script>
+<script src='https://unpkg.com/chevrotain@4.3.3/diagrams/src/diagrams_builder.js'></script>
+<script src='https://unpkg.com/chevrotain@4.3.3/diagrams/src/diagrams_behavior.js'></script>
+<script src='https://unpkg.com/chevrotain@4.3.3/diagrams/src/main.js'></script>
+
+<div id="diagrams" align="center"></div>    
+
+<script>
+    window.serializedGrammar = [
+  {
+    "type": "Rule",
+    "name": "program",
+    "orgText": "() => {\n      $.SUBRULE($.expressionStatement, left)\n    }",
+    "definition": [
+      {
+        "type": "NonTerminal",
+        "name": "expressionStatement",
+        "idx": 0
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "expressionStatement",
+    "orgText": "() => {\n      $.SUBRULE($.assignmentExpression, left)\n    }",
+    "definition": [
+      {
+        "type": "NonTerminal",
+        "name": "assignmentExpression",
+        "idx": 0
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "assignmentExpression",
+    "orgText": "() => {\n      $.SUBRULE($.additionExpression, left)\n    }",
+    "definition": [
+      {
+        "type": "NonTerminal",
+        "name": "additionExpression",
+        "idx": 0
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "additionExpression",
+    "orgText": "() => {\n      $.SUBRULE1($.multiplicationExpression, left)\n      $.MANY(() => {\n        $.CONSUME(t.AdditiveOperator, {LABEL: \"operator\"})\n        $.SUBRULE2($.multiplicationExpression, right)\n      })\n    }",
+    "definition": [
+      {
+        "type": "NonTerminal",
+        "name": "multiplicationExpression",
+        "idx": 1
+      },
+      {
+        "type": "Repetition",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "AdditiveOperator",
+            "label": "AdditiveOperator",
+            "idx": 0,
+            "pattern": "NOT_APPLICABLE"
+          },
+          {
+            "type": "NonTerminal",
+            "name": "multiplicationExpression",
+            "idx": 2
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "multiplicationExpression",
+    "orgText": "() => {\n      $.SUBRULE1($.equalityExpression, left)\n      $.MANY(() => {\n        $.CONSUME(t.MultiplicativeOperator, {LABEL: \"operator\"})\n        $.SUBRULE2($.equalityExpression, right)\n      })\n    }",
+    "definition": [
+      {
+        "type": "NonTerminal",
+        "name": "equalityExpression",
+        "idx": 1
+      },
+      {
+        "type": "Repetition",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "MultiplicativeOperator",
+            "label": "MultiplicativeOperator",
+            "idx": 0,
+            "pattern": "NOT_APPLICABLE"
+          },
+          {
+            "type": "NonTerminal",
+            "name": "equalityExpression",
+            "idx": 2
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "equalityExpression",
+    "orgText": "() => {\n      $.SUBRULE1($.unaryExpression, left)\n      $.MANY(() => {\n        $.CONSUME(t.EqualityOperator)\n        $.SUBRULE2($.unaryExpression, right)\n      })\n    }",
+    "definition": [
+      {
+        "type": "NonTerminal",
+        "name": "unaryExpression",
+        "idx": 1
+      },
+      {
+        "type": "Repetition",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "EqualityOperator",
+            "label": "EqualityOperator",
+            "idx": 0,
+            "pattern": "NOT_APPLICABLE"
+          },
+          {
+            "type": "NonTerminal",
+            "name": "unaryExpression",
+            "idx": 2
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "unaryExpression",
+    "orgText": "() => {\n      $.OR([\n        { ALT: () => $.SUBRULE($.primaryExpression, left) },\n        { ALT: () => {\n          $.CONSUME(t.UnaryOperator)\n          $.SUBRULE($.unaryExpression, right)\n        }}\n      ])\n    }",
+    "definition": [
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "primaryExpression",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "UnaryOperator",
+                "label": "UnaryOperator",
+                "idx": 0,
+                "pattern": "NOT_APPLICABLE"
+              },
+              {
+                "type": "NonTerminal",
+                "name": "unaryExpression",
+                "idx": 0
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "primaryExpression",
+    "orgText": "() => {\n      $.OR([\n        { ALT: () => $.CONSUME(t.Identifier, {LABEL: \"literal\"}) },\n        { ALT: () => $.CONSUME(t.StringLiteral, {LABEL: \"literal\"}) },\n        { ALT: () => $.CONSUME(t.NumberLiteral, {LABEL: \"literal\"}) },\n        { ALT: () => $.CONSUME(t.True, {LABEL: \"literal\"}) },\n        { ALT: () => $.CONSUME(t.False, {LABEL: \"literal\"}) },\n        { ALT: () => $.CONSUME(t.Null, {LABEL: \"literal\"}) }\n      ])\n    }",
+    "definition": [
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "Identifier",
+                "label": "Identifier",
+                "idx": 0,
+                "pattern": "[a-zA-z]\\w+"
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "StringLiteral",
+                "label": "StringLiteral",
+                "idx": 0,
+                "pattern": "\"(?:[^\\\\\"]|\\\\(?:[bfnrtv\"\\\\\\/]|u[0-9a-fA-F]{4}))*\""
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "NumberLiteral",
+                "label": "NumberLiteral",
+                "idx": 0,
+                "pattern": "-?(0|[1-9]\\d*)(\\.\\d+)?([eE][+-]?\\d+)?"
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "True",
+                "label": "True",
+                "idx": 0,
+                "pattern": "verdadeiro"
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "False",
+                "label": "False",
+                "idx": 0,
+                "pattern": "falso"
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "Null",
+                "label": "Null",
+                "idx": 0,
+                "pattern": "nulo"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+];
+</script>
+
+<script>
+    var diagramsDiv = document.getElementById("diagrams");
+    main.drawDiagramsFromSerializedGrammar(serializedGrammar, diagramsDiv);
+</script>
