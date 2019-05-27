@@ -1,0 +1,14 @@
+{
+  "name": "lang",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "pliavi <pliavi.rpgm@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "chevrotain": "^4.3.3"
+  },
+  "scripts": {
+    "start": "node src/index.js && yarn diagram",
+    "diagram": "node src/diagram.js"
+  }
+}
