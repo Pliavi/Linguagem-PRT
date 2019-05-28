@@ -12,7 +12,7 @@ const False = createToken({
 
 const Identifier = createToken({
     name: "Identifier", 
-    pattern: /[a-zA-z]\w+/ 
+    pattern: /[a-zA-z_]\w*/ 
 })
 
 const Null = createToken({ 
@@ -24,8 +24,8 @@ const LCurly = createToken({ name: "LCurly", pattern: /{/ })
 const RCurly = createToken({ name: "RCurly", pattern: /}/ })
 const LSquare = createToken({ name: "LSquare", pattern: /\[/ })
 const RSquare = createToken({ name: "RSquare", pattern: /]/ })
-const LParens = createToken({ name: "LParens", pattern: /\(/ })
-const RParens = createToken({ name: "RParens", pattern: /\)/ })
+const LParen = createToken({ name: "LParen", pattern: /\(/ })
+const RParen = createToken({ name: "RParen", pattern: /\)/ })
 const Comma = createToken({ name: "Comma", pattern: /,/ })
 const Colon = createToken({ name: "Colon", pattern: /:/ })
 
@@ -47,6 +47,8 @@ const WhiteSpace = createToken({
 })
 
 const UnaryOperator = createToken({ name: "UnaryOperator", pattern: Lexer.NA })
+const ReturnToken = createToken({ name: "ReturnToken", pattern: /retorna/})
+
 const AdditiveOperator = createToken({ name: "AdditiveOperator", categories: UnaryOperator, pattern: Lexer.NA })
 const Plus = createToken({ name: "Plus", pattern: /-/ , categories: AdditiveOperator})
 const Minus = createToken({ name: "Minus", pattern: /\+/ , categories: AdditiveOperator})
@@ -60,7 +62,11 @@ const Equal = createToken({ name: "Equal", pattern: /=/, categories: EqualityOpe
 
 const FatArrow = createToken({ name: "FatArrow", pattern: /=>/ })
 
+const FunctionToken = createToken({name: "FunctionToken", pattern: /função/})
+
 const tokensDefinition = {
+    ReturnToken,
+    FunctionToken,
     EqualityOperator,
     UnaryOperator,
     FatArrow,
@@ -78,8 +84,8 @@ const tokensDefinition = {
     RCurly,
     LSquare,
     RSquare,
-    LParens,
-    RParens,
+    LParen,
+    RParen,
     Comma,
     Colon,
     True,
@@ -102,7 +108,7 @@ module.exports = {
         const lexingResult = PRTLexer.tokenize(inputText)
 
         if (lexingResult.errors.length > 0) {
-            throw Error("lexing errors detected")
+            //throw Error("lexing errors detected")
         }
 
         return lexingResult
