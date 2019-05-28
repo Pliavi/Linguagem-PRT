@@ -12,9 +12,44 @@ class PRTParser extends Parser {
     const t = tokenVocabulary
 
     $.RULE("program", () => {
-      $.SUBRULE($.expressionStatement, left)
+      $.AT_LEAST_ONE(()=> {
+        $.SUBRULE($.functionDeclaration)
+      })
     })
 
+    // Start: Functions
+    $.RULE("functionDeclaration", () => {
+      $.CONSUME(t.FunctionToken)
+      $.CONSUME(t.Identifier)
+      $.CONSUME(t.LParen)
+      $.MANY_SEP({
+        SEP: t.Comma,
+        DEF: () => {$.SUBRULE($.parameterList)}
+      })
+      $.CONSUME(t.RParen)
+      $.SUBRULE($.sourceElements)
+    })
+
+    $.RULE("functionCall", () => {
+      $.CONSUME(t.Identifier)
+      $.CONSUME(t.LParen)
+      $.SUBRULE($.expressionStatement)
+      $.CONSUME(t.RParen)
+    })
+
+    $.RULE("parameterList", () => {
+      $.OR([
+        { ALT: () => $.CONSUME(t.Identifier, { LABEL: "literal" }) },
+        { ALT: () => $.CONSUME(t.StringLiteral, { LABEL: "literal" }) },
+        { ALT: () => $.CONSUME(t.NumberLiteral, { LABEL: "literal" }) },
+        { ALT: () => $.CONSUME(t.True, { LABEL: "literal" }) },
+        { ALT: () => $.CONSUME(t.False, { LABEL: "literal" }) },
+        { ALT: () => $.CONSUME(t.Null, { LABEL: "literal "}) }
+      ])
+    })
+    // End: Functions
+    
+    // Start: Expressions
     $.RULE("expressionStatement", () => {
       $.SUBRULE($.assignmentExpression, left)
     })
@@ -52,21 +87,50 @@ class PRTParser extends Parser {
         { ALT: () => $.SUBRULE($.primaryExpression, left) },
         { ALT: () => {
           $.CONSUME(t.UnaryOperator)
-          $.SUBRULE($.unaryExpression, right)
+          $.SUBRULE2($.unaryExpression, right)
         }}
       ])
     })
 
     $.RULE("primaryExpression", () => {
       $.OR([
+        { ALT: () => $.SUBRULE($.functionCall, {LABEL: "functionCall"})},
         { ALT: () => $.CONSUME(t.Identifier, { LABEL: "literal" }) },
         { ALT: () => $.CONSUME(t.StringLiteral, { LABEL: "literal" }) },
         { ALT: () => $.CONSUME(t.NumberLiteral, { LABEL: "literal" }) },
         { ALT: () => $.CONSUME(t.True, { LABEL: "literal" }) },
         { ALT: () => $.CONSUME(t.False, { LABEL: "literal" }) },
-        { ALT: () => $.CONSUME(t.Null, { LABEL: "literal "}) }
+        { ALT: () => $.CONSUME(t.Null, { LABEL: "literal "}) },
+        { ALT: () => $.SUBRULE($.parenthesisExpression, {LABEL: "literal"})},
       ])
     })
+
+    $.RULE("parenthesisExpression", () => {
+      $.CONSUME(t.LParen)
+      $.SUBRULE($.expressionStatement)
+      $.CONSUME(t.RParen)
+    })
+    // End: Expressions
+
+    $.RULE("sourceElements", () => {
+      $.MANY(() => {
+        $.OR([
+          { ALT: () => $.SUBRULE($.functionDeclaration) },
+          { ALT: () => $.SUBRULE($.statement) }
+        ])
+      })
+    })
+
+    // Start: Statements
+    $.RULE("statement", () => {
+      $.SUBRULE($.returnStatement)
+    })
+
+    $.RULE("returnStatement", () => {
+      $.CONSUME(t.ReturnToken)
+      $.SUBRULE($.expressionStatement)
+    })
+    // End: Statements
 
     this.performSelfAnalysis();
   }

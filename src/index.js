@@ -2,10 +2,18 @@ const { parse } = require("./parser")
 const { inspect } = require('util')
 const { myCustomVisitorWithDefaults } = require("./codegen")
 
-const cst = parse("abap=2+2*7")
+let cst = parse(`
+função fatorial(n) retorna n * fatorial(n-1)
+função fatorial(1) 
+    retorna 1
+`)
+
+cst = parse(`
+função fatorial(n) retorna n * fatorial(n-1)
+`)
 
 if(cst.lexErrors.length > 0) {
-    console.log(inspect(cst.parseErrors, false, null, true))
+    console.log(inspect(cst.lexErrors, false, null, true))
 } else if(cst.parseErrors.length > 0) {
     console.log(inspect(cst.parseErrors, false, null, true))
 } else {
