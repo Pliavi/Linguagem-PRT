@@ -23,12 +23,194 @@
   {
     "type": "Rule",
     "name": "program",
-    "orgText": "() => {\n      $.SUBRULE($.expressionStatement, left)\n    }",
+    "orgText": "() => {\n      $.AT_LEAST_ONE(()=> {\n        $.SUBRULE($.functionDeclaration)\n      })\n    }",
     "definition": [
+      {
+        "type": "RepetitionMandatory",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "NonTerminal",
+            "name": "functionDeclaration",
+            "idx": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "functionDeclaration",
+    "orgText": "() => {\n      $.CONSUME(t.FunctionToken)\n      $.CONSUME(t.Identifier)\n      $.CONSUME(t.LParen)\n      $.MANY_SEP({\n        SEP: t.Comma,\n        DEF: () => {$.SUBRULE($.parameterList)}\n      })\n      $.CONSUME(t.RParen)\n      $.SUBRULE($.sourceElements)\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "FunctionToken",
+        "label": "FunctionToken",
+        "idx": 0,
+        "pattern": "função"
+      },
+      {
+        "type": "Terminal",
+        "name": "Identifier",
+        "label": "Identifier",
+        "idx": 0,
+        "pattern": "[a-zA-z_]\\w*"
+      },
+      {
+        "type": "Terminal",
+        "name": "LParen",
+        "label": "LParen",
+        "idx": 0,
+        "pattern": "\\("
+      },
+      {
+        "type": "RepetitionWithSeparator",
+        "idx": 0,
+        "separator": {
+          "type": "Terminal",
+          "name": "Comma",
+          "label": "Comma",
+          "idx": 1,
+          "pattern": ","
+        },
+        "definition": [
+          {
+            "type": "NonTerminal",
+            "name": "parameterList",
+            "idx": 0
+          }
+        ]
+      },
+      {
+        "type": "Terminal",
+        "name": "RParen",
+        "label": "RParen",
+        "idx": 0,
+        "pattern": "\\)"
+      },
+      {
+        "type": "NonTerminal",
+        "name": "sourceElements",
+        "idx": 0
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "functionCall",
+    "orgText": "() => {\n      $.CONSUME(t.Identifier)\n      $.CONSUME(t.LParen)\n      $.SUBRULE($.expressionStatement)\n      $.CONSUME(t.RParen)\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "Identifier",
+        "label": "Identifier",
+        "idx": 0,
+        "pattern": "[a-zA-z_]\\w*"
+      },
+      {
+        "type": "Terminal",
+        "name": "LParen",
+        "label": "LParen",
+        "idx": 0,
+        "pattern": "\\("
+      },
       {
         "type": "NonTerminal",
         "name": "expressionStatement",
         "idx": 0
+      },
+      {
+        "type": "Terminal",
+        "name": "RParen",
+        "label": "RParen",
+        "idx": 0,
+        "pattern": "\\)"
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "parameterList",
+    "orgText": "() => {\n      $.OR([\n        { ALT: () => $.CONSUME(t.Identifier, { LABEL: \"literal\" }) },\n        { ALT: () => $.CONSUME(t.StringLiteral, { LABEL: \"literal\" }) },\n        { ALT: () => $.CONSUME(t.NumberLiteral, { LABEL: \"literal\" }) },\n        { ALT: () => $.CONSUME(t.True, { LABEL: \"literal\" }) },\n        { ALT: () => $.CONSUME(t.False, { LABEL: \"literal\" }) },\n        { ALT: () => $.CONSUME(t.Null, { LABEL: \"literal \"}) }\n      ])\n    }",
+    "definition": [
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "Identifier",
+                "label": "Identifier",
+                "idx": 0,
+                "pattern": "[a-zA-z_]\\w*"
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "StringLiteral",
+                "label": "StringLiteral",
+                "idx": 0,
+                "pattern": "\"(?:[^\\\\\"]|\\\\(?:[bfnrtv\"\\\\\\/]|u[0-9a-fA-F]{4}))*\""
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "NumberLiteral",
+                "label": "NumberLiteral",
+                "idx": 0,
+                "pattern": "-?(0|[1-9]\\d*)(\\.\\d+)?([eE][+-]?\\d+)?"
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "True",
+                "label": "True",
+                "idx": 0,
+                "pattern": "verdadeiro"
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "False",
+                "label": "False",
+                "idx": 0,
+                "pattern": "falso"
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "Null",
+                "label": "Null",
+                "idx": 0,
+                "pattern": "nulo"
+              }
+            ]
+          }
+        ]
       }
     ]
   },
@@ -149,7 +331,7 @@
   {
     "type": "Rule",
     "name": "unaryExpression",
-    "orgText": "() => {\n      $.OR([\n        { ALT: () => $.SUBRULE($.primaryExpression, left) },\n        { ALT: () => {\n          $.CONSUME(t.UnaryOperator)\n          $.SUBRULE($.unaryExpression, right)\n        }}\n      ])\n    }",
+    "orgText": "() => {\n      $.OR([\n        { ALT: () => $.SUBRULE($.primaryExpression, left) },\n        { ALT: () => {\n          $.CONSUME(t.UnaryOperator)\n          $.SUBRULE2($.unaryExpression, right)\n        }}\n      ])\n    }",
     "definition": [
       {
         "type": "Alternation",
@@ -178,7 +360,7 @@
               {
                 "type": "NonTerminal",
                 "name": "unaryExpression",
-                "idx": 0
+                "idx": 2
               }
             ]
           }
@@ -189,7 +371,7 @@
   {
     "type": "Rule",
     "name": "primaryExpression",
-    "orgText": "() => {\n      $.OR([\n        { ALT: () => $.CONSUME(t.Identifier, {LABEL: \"literal\"}) },\n        { ALT: () => $.CONSUME(t.StringLiteral, {LABEL: \"literal\"}) },\n        { ALT: () => $.CONSUME(t.NumberLiteral, {LABEL: \"literal\"}) },\n        { ALT: () => $.CONSUME(t.True, {LABEL: \"literal\"}) },\n        { ALT: () => $.CONSUME(t.False, {LABEL: \"literal\"}) },\n        { ALT: () => $.CONSUME(t.Null, {LABEL: \"literal\"}) }\n      ])\n    }",
+    "orgText": "() => {\n      $.OR([\n        { ALT: () => $.SUBRULE($.functionCall, {LABEL: \"functionCall\"})},\n        { ALT: () => $.CONSUME(t.Identifier, { LABEL: \"literal\" }) },\n        { ALT: () => $.CONSUME(t.StringLiteral, { LABEL: \"literal\" }) },\n        { ALT: () => $.CONSUME(t.NumberLiteral, { LABEL: \"literal\" }) },\n        { ALT: () => $.CONSUME(t.True, { LABEL: \"literal\" }) },\n        { ALT: () => $.CONSUME(t.False, { LABEL: \"literal\" }) },\n        { ALT: () => $.CONSUME(t.Null, { LABEL: \"literal \"}) },\n        { ALT: () => $.SUBRULE($.parenthesisExpression, {LABEL: \"literal\"})},\n      ])\n    }",
     "definition": [
       {
         "type": "Alternation",
@@ -199,11 +381,21 @@
             "type": "Flat",
             "definition": [
               {
+                "type": "NonTerminal",
+                "name": "functionCall",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
                 "type": "Terminal",
                 "name": "Identifier",
                 "label": "Identifier",
                 "idx": 0,
-                "pattern": "[a-zA-z]\\w+"
+                "pattern": "[a-zA-z_]\\w*"
               }
             ]
           },
@@ -266,8 +458,114 @@
                 "pattern": "nulo"
               }
             ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "parenthesisExpression",
+                "idx": 0
+              }
+            ]
           }
         ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "parenthesisExpression",
+    "orgText": "() => {\n      $.CONSUME(t.LParen)\n      $.SUBRULE($.expressionStatement)\n      $.CONSUME(t.RParen)\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "LParen",
+        "label": "LParen",
+        "idx": 0,
+        "pattern": "\\("
+      },
+      {
+        "type": "NonTerminal",
+        "name": "expressionStatement",
+        "idx": 0
+      },
+      {
+        "type": "Terminal",
+        "name": "RParen",
+        "label": "RParen",
+        "idx": 0,
+        "pattern": "\\)"
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "sourceElements",
+    "orgText": "() => {\n      $.MANY(() => {\n        $.OR([\n          { ALT: () => $.SUBRULE($.functionDeclaration) },\n          { ALT: () => $.SUBRULE($.statement) }\n        ])\n      })\n    }",
+    "definition": [
+      {
+        "type": "Repetition",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Alternation",
+            "idx": 0,
+            "definition": [
+              {
+                "type": "Flat",
+                "definition": [
+                  {
+                    "type": "NonTerminal",
+                    "name": "functionDeclaration",
+                    "idx": 0
+                  }
+                ]
+              },
+              {
+                "type": "Flat",
+                "definition": [
+                  {
+                    "type": "NonTerminal",
+                    "name": "statement",
+                    "idx": 0
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "statement",
+    "orgText": "() => {\n      $.SUBRULE($.returnStatement)\n    }",
+    "definition": [
+      {
+        "type": "NonTerminal",
+        "name": "returnStatement",
+        "idx": 0
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "returnStatement",
+    "orgText": "() => {\n      $.CONSUME(t.ReturnToken)\n      $.SUBRULE($.expressionStatement)\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "ReturnToken",
+        "label": "ReturnToken",
+        "idx": 0,
+        "pattern": "retorna"
+      },
+      {
+        "type": "NonTerminal",
+        "name": "expressionStatement",
+        "idx": 0
       }
     ]
   }
