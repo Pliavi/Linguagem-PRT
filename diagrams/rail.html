@@ -41,7 +41,7 @@
   {
     "type": "Rule",
     "name": "functionDeclaration",
-    "orgText": "() => {\n      $.CONSUME(t.FunctionToken)\n      $.CONSUME(t.Identifier)\n      $.CONSUME(t.LParen)\n      $.MANY_SEP({\n        SEP: t.Comma,\n        DEF: () => {$.SUBRULE($.parameterList)}\n      })\n      $.CONSUME(t.RParen)\n      $.SUBRULE($.sourceElements)\n    }",
+    "orgText": "() => {\n      $.CONSUME(t.FunctionToken)\n      $.CONSUME(t.Identifier)\n      $.CONSUME(t.LParen)\n      $.MANY_SEP({\n        SEP: t.Comma,\n        DEF: () => {$.SUBRULE($.parameterList)},\n        LABEL: \"parameters\"\n      })\n      $.CONSUME(t.RParen)\n      $.SUBRULE($.sourceElements)\n    }",
     "definition": [
       {
         "type": "Terminal",

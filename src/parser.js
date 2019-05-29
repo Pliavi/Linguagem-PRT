@@ -24,7 +24,8 @@ class PRTParser extends Parser {
       $.CONSUME(t.LParen)
       $.MANY_SEP({
         SEP: t.Comma,
-        DEF: () => {$.SUBRULE($.parameterList)}
+        DEF: () => {$.SUBRULE($.parameterList)},
+        LABEL: "parameters"
       })
       $.CONSUME(t.RParen)
       $.SUBRULE($.sourceElements)
