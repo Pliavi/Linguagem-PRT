@@ -5,37 +5,115 @@ class ASTVisitor extends BasePRTVisitor {
   constructor() {
     super()
     this.validateVisitor()
+    this.string = "";
   }
 
   program(ctx) {
-    return this.visit(ctx.functionDeclaration)
+    ctx.functionDeclaration
+      .forEach(dec => this.visit(dec))
   }
 
   functionDeclaration(ctx) {
-    let parameters = [] 
-    if(undefined !== ctx.parameters){
-      parameters.push(ctx.parameters.map(this.visit))
+    this.string += `const ${ctx.Identifier[0].image} = (`
+
+    if(ctx.parameterList) {
+      const parameters = ctx.parameterList
+        .map(parameter => this.visit(parameter))
+
+      this.string += parameters.join(",")
     }
+
+    this.string += ") => "
+
     this.visit(ctx.sourceElements)
-    
-    return {
-      function: ctx.Identifier,
-      parameters
+  }
+
+  functionCall(ctx) { 
+    this.string += ctx.Identifier[0].image + "(" 
+    this.visit(ctx.expressionStatement)
+    this.string += ")"
+  }
+
+  parameterList(ctx) { return ctx.literal[0].image }
+
+  expressionStatement(ctx) { this.visit(ctx.left) }
+  assignmentExpression(ctx) { this.visit(ctx.left) }
+
+  additionExpression(ctx) { 
+    this.visit(ctx.left)
+
+    if(ctx.right) {
+      for (let i = 0; i < ctx.right.length; i++) {
+        this.string += ctx.operator[0].image
+        const right = ctx.right[i];
+        this.visit(right)
+      }
     }
   }
-  functionCall(ctx) { return ctx }
-  parameterList(ctx) { return ctx }
-  expressionStatement(ctx) { return ctx }
-  assignmentExpression(ctx) { return ctx }
-  additionExpression(ctx) { return ctx }
-  multiplicationExpression(ctx) { return ctx }
-  equalityExpression(ctx) { return ctx }
-  unaryExpression(ctx) { return ctx }
-  primaryExpression(ctx) { return ctx }
-  parenthesisExpression(ctx) { return ctx }
-  sourceElements(ctx) { return ctx }
-  statement(ctx) { return ctx }
-  returnStatement(ctx) { return ctx }
+
+  multiplicationExpression(ctx) { 
+    this.visit(ctx.left)
+
+    if(ctx.right) {
+      for (let i = 0; i < ctx.right.length; i++) {
+        this.string += ctx.operator[0].image
+        const right = ctx.right[i];
+        this.visit(right)
+      }
+    }
+  }
+
+  equalityExpression(ctx) {
+    this.visit(ctx.left)
+
+    if(ctx.right) {
+      for (let i = 0; i < ctx.right.length; i++) {
+        this.string += ctx.operator[0].image
+        const right = ctx.right[i];
+        this.visit(right)
+      }
+    }
+  }
+
+  unaryExpression(ctx) { 
+    this.visit(ctx.left)
+
+    if(ctx.right) {
+      for (let i = 0; i < ctx.right.length; i++) {
+        this.string += ctx.operator[0].image
+        const right = ctx.right[i];
+        this.visit(right)
+      }
+    }
+  }
+
+  primaryExpression(ctx) { 
+    if(ctx.parenthesis){
+      this.visit(ctx.parenthesis)
+    }
+    if(ctx.functionCall){
+      this.visit(ctx.functionCall)
+    }
+    if(ctx.literal){
+      this.string += ctx.literal[0].image
+    }
+  }
+
+  parenthesisExpression(ctx) { 
+    this.string += "("
+    this.visit(ctx.expressionStatement)
+    this.string += ")"
+  }
+
+  sourceElements(ctx) { 
+    // if(ctx.functionDeclaration) { this.visit(ctx.functionDeclaration) }
+    if(ctx.statement) { this.visit(ctx.statement) }
+  }
+  statement(ctx) { this.visit(ctx.returnStatement) }
+  returnStatement(ctx) { 
+    this.visit(ctx.expressionStatement)
+    this.string += "\n"
+  }
 }
 
 module.exports = {

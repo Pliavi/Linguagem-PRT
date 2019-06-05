@@ -25,7 +25,6 @@ class PRTParser extends Parser {
       $.MANY_SEP({
         SEP: t.Comma,
         DEF: () => {$.SUBRULE($.parameterList)},
-        LABEL: "parameters"
       })
       $.CONSUME(t.RParen)
       $.SUBRULE($.sourceElements)
@@ -78,7 +77,7 @@ class PRTParser extends Parser {
     $.RULE("equalityExpression", () => {
       $.SUBRULE1($.unaryExpression, left)
       $.MANY(() => {
-        $.CONSUME(t.EqualityOperator)
+        $.CONSUME(t.EqualityOperator, {LABEL: "operator"})
         $.SUBRULE2($.unaryExpression, right)
       })
     })
@@ -87,7 +86,7 @@ class PRTParser extends Parser {
       $.OR([
         { ALT: () => $.SUBRULE($.primaryExpression, left) },
         { ALT: () => {
-          $.CONSUME(t.UnaryOperator)
+          $.CONSUME(t.UnaryOperator, {LABEL: "operator"})
           $.SUBRULE2($.unaryExpression, right)
         }}
       ])
@@ -102,7 +101,7 @@ class PRTParser extends Parser {
         { ALT: () => $.CONSUME(t.True, { LABEL: "literal" }) },
         { ALT: () => $.CONSUME(t.False, { LABEL: "literal" }) },
         { ALT: () => $.CONSUME(t.Null, { LABEL: "literal "}) },
-        { ALT: () => $.SUBRULE($.parenthesisExpression, {LABEL: "literal"})},
+        { ALT: () => $.SUBRULE($.parenthesisExpression, {LABEL: "parenthesis"})},
       ])
     })
 
@@ -116,7 +115,6 @@ class PRTParser extends Parser {
     $.RULE("sourceElements", () => {
       $.MANY(() => {
         $.OR([
-          { ALT: () => $.SUBRULE($.functionDeclaration) },
           { ALT: () => $.SUBRULE($.statement) }
         ])
       })

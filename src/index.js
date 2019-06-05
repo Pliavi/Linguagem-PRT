@@ -2,18 +2,27 @@ const { parse } = require("./parser")
 const { inspect } = require('util')
 const { ASTVisitor } = require("./ASTVisitor")
 
-let cst = parse(`
+let input = `
 função fatorial(n) retorna n * fatorial(n-1)
 função fatorial(1) 
     retorna 1
-`)
 
-if(cst.lexErrors.length > 0) {
-    console.log(inspect(cst.lexErrors, false, null, true))
-} else if(cst.parseErrors.length > 0) {
-    console.log(inspect(cst.parseErrors, false, null, true))
+função iniciar() retorna fatorial(5)
+`
+
+let parsedInput = parse(input);
+// parsedInput = parse(`função fatorial(n) retorna n * fatorial(n-1)`);
+
+if(parsedInput.lexErrors.length > 0) {
+    console.log(inspect(parsedInput.lexErrors, false, null, true))
+} else if(parsedInput.parseErrors.length > 0) {
+    console.log(inspect(parsedInput.parseErrors, false, null, true))
 } else {
-    // console.log(inspect(cst, false, null, true))
+    const cst = parsedInput.cst;
     const ast = new ASTVisitor()
-    console.log(inspect(ast.visit(cst.program), false, null, true))
+    ast.visit(cst)
+    console.log("INPUT ->")
+    console.log(input.trim())
+    console.log("\nPARSED ->")
+    console.log(ast.string)
 }
