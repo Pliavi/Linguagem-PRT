@@ -41,7 +41,7 @@
   {
     "type": "Rule",
     "name": "functionDeclaration",
-    "orgText": "() => {\n      $.CONSUME(t.FunctionToken)\n      $.CONSUME(t.Identifier)\n      $.CONSUME(t.LParen)\n      $.MANY_SEP({\n        SEP: t.Comma,\n        DEF: () => {$.SUBRULE($.parameterList)},\n        LABEL: \"parameters\"\n      })\n      $.CONSUME(t.RParen)\n      $.SUBRULE($.sourceElements)\n    }",
+    "orgText": "() => {\n      $.CONSUME(t.FunctionToken)\n      $.CONSUME(t.Identifier)\n      $.CONSUME(t.LParen)\n      $.MANY_SEP({\n        SEP: t.Comma,\n        DEF: () => {$.SUBRULE($.parameterList)},\n      })\n      $.CONSUME(t.RParen)\n      $.SUBRULE($.sourceElements)\n    }",
     "definition": [
       {
         "type": "Terminal",
@@ -301,7 +301,7 @@
   {
     "type": "Rule",
     "name": "equalityExpression",
-    "orgText": "() => {\n      $.SUBRULE1($.unaryExpression, left)\n      $.MANY(() => {\n        $.CONSUME(t.EqualityOperator)\n        $.SUBRULE2($.unaryExpression, right)\n      })\n    }",
+    "orgText": "() => {\n      $.SUBRULE1($.unaryExpression, left)\n      $.MANY(() => {\n        $.CONSUME(t.EqualityOperator, {LABEL: \"operator\"})\n        $.SUBRULE2($.unaryExpression, right)\n      })\n    }",
     "definition": [
       {
         "type": "NonTerminal",
@@ -331,7 +331,7 @@
   {
     "type": "Rule",
     "name": "unaryExpression",
-    "orgText": "() => {\n      $.OR([\n        { ALT: () => $.SUBRULE($.primaryExpression, left) },\n        { ALT: () => {\n          $.CONSUME(t.UnaryOperator)\n          $.SUBRULE2($.unaryExpression, right)\n        }}\n      ])\n    }",
+    "orgText": "() => {\n      $.OR([\n        { ALT: () => $.SUBRULE($.primaryExpression, left) },\n        { ALT: () => {\n          $.CONSUME(t.UnaryOperator, {LABEL: \"operator\"})\n          $.SUBRULE2($.unaryExpression, right)\n        }}\n      ])\n    }",
     "definition": [
       {
         "type": "Alternation",
@@ -371,7 +371,7 @@
   {
     "type": "Rule",
     "name": "primaryExpression",
-    "orgText": "() => {\n      $.OR([\n        { ALT: () => $.SUBRULE($.functionCall, {LABEL: \"functionCall\"})},\n        { ALT: () => $.CONSUME(t.Identifier, { LABEL: \"literal\" }) },\n        { ALT: () => $.CONSUME(t.StringLiteral, { LABEL: \"literal\" }) },\n        { ALT: () => $.CONSUME(t.NumberLiteral, { LABEL: \"literal\" }) },\n        { ALT: () => $.CONSUME(t.True, { LABEL: \"literal\" }) },\n        { ALT: () => $.CONSUME(t.False, { LABEL: \"literal\" }) },\n        { ALT: () => $.CONSUME(t.Null, { LABEL: \"literal \"}) },\n        { ALT: () => $.SUBRULE($.parenthesisExpression, {LABEL: \"literal\"})},\n      ])\n    }",
+    "orgText": "() => {\n      $.OR([\n        { ALT: () => $.SUBRULE($.functionCall, {LABEL: \"functionCall\"})},\n        { ALT: () => $.CONSUME(t.Identifier, { LABEL: \"literal\" }) },\n        { ALT: () => $.CONSUME(t.StringLiteral, { LABEL: \"literal\" }) },\n        { ALT: () => $.CONSUME(t.NumberLiteral, { LABEL: \"literal\" }) },\n        { ALT: () => $.CONSUME(t.True, { LABEL: \"literal\" }) },\n        { ALT: () => $.CONSUME(t.False, { LABEL: \"literal\" }) },\n        { ALT: () => $.CONSUME(t.Null, { LABEL: \"literal \"}) },\n        { ALT: () => $.SUBRULE($.parenthesisExpression, {LABEL: \"parenthesis\"})},\n      ])\n    }",
     "definition": [
       {
         "type": "Alternation",
@@ -502,7 +502,7 @@
   {
     "type": "Rule",
     "name": "sourceElements",
-    "orgText": "() => {\n      $.MANY(() => {\n        $.OR([\n          { ALT: () => $.SUBRULE($.functionDeclaration) },\n          { ALT: () => $.SUBRULE($.statement) }\n        ])\n      })\n    }",
+    "orgText": "() => {\n      $.MANY(() => {\n        $.OR([\n          { ALT: () => $.SUBRULE($.statement) }\n        ])\n      })\n    }",
     "definition": [
       {
         "type": "Repetition",
@@ -512,16 +512,6 @@
             "type": "Alternation",
             "idx": 0,
             "definition": [
-              {
-                "type": "Flat",
-                "definition": [
-                  {
-                    "type": "NonTerminal",
-                    "name": "functionDeclaration",
-                    "idx": 0
-                  }
-                ]
-              },
               {
                 "type": "Flat",
                 "definition": [
