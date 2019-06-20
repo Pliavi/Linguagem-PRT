@@ -1,5 +1,6 @@
-const { parserInstance } = require("./parser")
-const BasePRTVisitor = parserInstance.getBaseCstVisitorConstructorWithDefaults()
+const { inspect } = require('util')
+const generate = require("./lib/helpers")
+const BasePRTVisitor = require("./BaseVisitor").BaseVisitor
 
 class ASTVisitor extends BasePRTVisitor {
   constructor() {
@@ -9,110 +10,131 @@ class ASTVisitor extends BasePRTVisitor {
   }
 
   program(ctx) {
-    ctx.functionDeclaration
-      .forEach(dec => this.visit(dec))
+    const program = ctx.functionDeclaration.map(declaration => this.visit(declaration))
+      .reduce((acc, { identifier, parameters, body }) => {
+        acc[identifier] = acc[identifier] ? acc[identifier] : []
+        acc[identifier].push({parameters, body})
+        return acc
+      }, {})
+
+    console.log(inspect(program, false, null, true))
   }
 
   functionDeclaration(ctx) {
-    this.string += `const ${ctx.Identifier[0].image} = (`
+    const identifier = ctx.Identifier[0].image
+    const parameters = this.$getParameters(ctx.parameterList)
+    const body = this.visit(ctx.sourceElements)
 
-    if(ctx.parameterList) {
-      const parameters = ctx.parameterList
-        .map(parameter => this.visit(parameter))
-
-      this.string += parameters.join(",")
+    return {
+      identifier,
+      parameters,
+      body
     }
-
-    this.string += ") => "
-
-    this.visit(ctx.sourceElements)
   }
 
   functionCall(ctx) { 
-    this.string += ctx.Identifier[0].image + "(" 
-    this.visit(ctx.expressionStatement)
-    this.string += ")"
+    const identifier = ctx.Identifier[0].image 
+    const body = this.visit(ctx.expressionStatement)
+
+    return `${identifier}(${body})`
   }
 
-  parameterList(ctx) { return ctx.literal[0].image }
+  parameterList(ctx) { 
+    return {
+      type: ctx.literal[0].tokenType.tokenName,
+      image: ctx.literal[0].image
+    }
+  }
 
-  expressionStatement(ctx) { this.visit(ctx.left) }
-  assignmentExpression(ctx) { this.visit(ctx.left) }
-
+  expressionStatement(ctx)  { return this.visit(ctx.left) }
+  assignmentExpression(ctx) { return this.visit(ctx.left) }
   additionExpression(ctx) { 
-    this.visit(ctx.left)
+    let right = ""
+    const left = this.visit(ctx.left)
 
     if(ctx.right) {
       for (let i = 0; i < ctx.right.length; i++) {
-        this.string += ctx.operator[0].image
-        const right = ctx.right[i];
-        this.visit(right)
+        right += ctx.operator[0].image
+        const rightNode = ctx.right[i];
+        right += this.visit(rightNode)
       }
     }
+
+    return left + right
   }
 
   multiplicationExpression(ctx) { 
-    this.visit(ctx.left)
+    let right = ""
+    const left = this.visit(ctx.left)
 
     if(ctx.right) {
       for (let i = 0; i < ctx.right.length; i++) {
-        this.string += ctx.operator[0].image
-        const right = ctx.right[i];
-        this.visit(right)
+        right += ctx.operator[0].image
+        const rightNode = ctx.right[i];
+        right += this.visit(rightNode)
       }
     }
+
+    return left + right
   }
 
   equalityExpression(ctx) {
-    this.visit(ctx.left)
+    let right = ""
+    const left = this.visit(ctx.left)
 
     if(ctx.right) {
       for (let i = 0; i < ctx.right.length; i++) {
-        this.string += ctx.operator[0].image
-        const right = ctx.right[i];
-        this.visit(right)
+        right += ctx.operator[0].image
+        const rightNode = ctx.right[i];
+        right += this.visit(rightNode)
       }
     }
+
+    return left + right
   }
 
   unaryExpression(ctx) { 
-    this.visit(ctx.left)
+    let right = ""
+    const left = this.visit(ctx.left)
 
     if(ctx.right) {
       for (let i = 0; i < ctx.right.length; i++) {
-        this.string += ctx.operator[0].image
-        const right = ctx.right[i];
-        this.visit(right)
+        right += ctx.operator[0].image
+        const rightNode = ctx.right[i];
+        right += this.visit(rightNode)
       }
     }
+
+    return left + right
   }
 
   primaryExpression(ctx) { 
     if(ctx.parenthesis){
-      this.visit(ctx.parenthesis)
+      return this.visit(ctx.parenthesis)
     }
     if(ctx.functionCall){
-      this.visit(ctx.functionCall)
+      return this.visit(ctx.functionCall)
     }
     if(ctx.literal){
-      this.string += ctx.literal[0].image
+      return ctx.literal[0].image
     }
   }
 
   parenthesisExpression(ctx) { 
-    this.string += "("
-    this.visit(ctx.expressionStatement)
-    this.string += ")"
+    const body = this.visit(ctx.expressionStatement)
+    return `(${body})`
   }
 
   sourceElements(ctx) { 
-    // if(ctx.functionDeclaration) { this.visit(ctx.functionDeclaration) }
-    if(ctx.statement) { this.visit(ctx.statement) }
+    return ctx.statement ? this.visit(ctx.statement) : null
   }
-  statement(ctx) { this.visit(ctx.returnStatement) }
+  statement(ctx) { 
+    return this.visit(ctx.returnStatement) 
+  }
+
   returnStatement(ctx) { 
-    this.visit(ctx.expressionStatement)
-    this.string += "\n"
+    const body = this.visit(ctx.expressionStatement)
+    return `${body}\n`
   }
 }
 

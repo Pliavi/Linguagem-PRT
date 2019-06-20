@@ -21,8 +21,8 @@ if(parsedInput.lexErrors.length > 0) {
     const cst = parsedInput.cst;
     const ast = new ASTVisitor()
     ast.visit(cst)
-    console.log("INPUT ->")
-    console.log(input.trim())
-    console.log("\nPARSED ->")
-    console.log(ast.string)
+    // console.log("INPUT ->")
+    // console.log(input.trim())
+    // console.log("\nPARSED ->")
+    // console.log(ast.string)
 }
