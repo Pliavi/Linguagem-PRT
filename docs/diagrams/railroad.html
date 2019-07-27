@@ -23,7 +23,7 @@
   {
     "type": "Rule",
     "name": "program",
-    "orgText": "function () {\n            _this.MANY(function () {\n                _this.SUBRULE(_this.function);\n            });\n        }",
+    "orgText": "() => {\n      $.MANY(() => {\n        $.SUBRULE($.declaration);\n      });\n    }",
     "definition": [
       {
         "type": "Repetition",
@@ -31,7 +31,7 @@
         "definition": [
           {
             "type": "NonTerminal",
-            "name": "function",
+            "name": "declaration",
             "idx": 0
           }
         ]
@@ -40,8 +40,8 @@
   },
   {
     "type": "Rule",
-    "name": "function",
-    "orgText": "function () {\n            _this.CONSUME(Tokens_1.IDENTIFIER);\n            _this.CONSUME(Tokens_1.L_PAREN);\n            _this.MANY_SEP({\n                SEP: Tokens_1.COMMA,\n                DEF: function () {\n                    _this.SUBRULE(_this.value, { ARGS: [true] });\n                }\n            });\n            _this.CONSUME(Tokens_1.R_PAREN);\n            _this.CONSUME(Tokens_1.RETURN_WORD);\n            _this.SUBRULE(_this.expression);\n        }",
+    "name": "declaration",
+    "orgText": "() => {\n      $.CONSUME(_Tokens.IDENTIFIER, {\n        LABEL: \"functionName\"\n      });\n      $.CONSUME(_Tokens.L_PAREN);\n      $.MANY_SEP({\n        SEP: _Tokens.COMMA,\n        DEF: () => {\n          $.SUBRULE($.value, {\n            ARGS: [true],\n            LABEL: \"params\"\n          });\n        }\n      });\n      $.CONSUME(_Tokens.R_PAREN);\n      $.CONSUME(_Tokens.RETURN_WORD);\n      $.SUBRULE($.expression, {\n        LABEL: \"body\"\n      });\n    }",
     "definition": [
       {
         "type": "Terminal",
@@ -99,7 +99,7 @@
   {
     "type": "Rule",
     "name": "expression",
-    "orgText": "function () {\n            _this.SUBRULE(_this.value);\n            _this.OPTION(function () {\n                _this.SUBRULE(_this.mathExpression);\n            });\n        }",
+    "orgText": "() => {\n      $.SUBRULE($.value, {\n        LABEL: \"left\"\n      });\n      $.OPTION(() => {\n        $.SUBRULE($.mathExpression, {\n          LABEL: \"right\"\n        });\n      });\n    }",
     "definition": [
       {
         "type": "NonTerminal",
@@ -122,7 +122,7 @@
   {
     "type": "Rule",
     "name": "mathExpression",
-    "orgText": "function () {\n            _this.SUBRULE(_this.binaryOperator);\n            _this.SUBRULE(_this.expression);\n        }",
+    "orgText": "() => {\n      $.SUBRULE($.binaryOperator, {\n        LABEL: \"operator\"\n      });\n      $.SUBRULE($.expression, {\n        LABEL: \"right\"\n      });\n    }",
     "definition": [
       {
         "type": "NonTerminal",
@@ -139,7 +139,7 @@
   {
     "type": "Rule",
     "name": "value",
-    "orgText": "function (isFunctionPermited) {\n            if (isFunctionPermited === void 0) { isFunctionPermited = false; }\n            _this.OR([\n                {\n                    GATE: isFunctionPermited,\n                    ALT: function () {\n                        _this.SUBRULE(_this.functionCall);\n                    }\n                },\n                {\n                    ALT: function () {\n                        _this.CONSUME(Tokens_1.NUMBER_LITERAL);\n                    }\n                },\n                {\n                    ALT: function () {\n                        _this.CONSUME(Tokens_1.STRING_LITERAL);\n                    }\n                },\n                {\n                    ALT: function () {\n                        _this.CONSUME(Tokens_1.TRUE);\n                    }\n                },\n                {\n                    ALT: function () {\n                        _this.CONSUME(Tokens_1.FALSE);\n                    }\n                },\n                {\n                    ALT: function () {\n                        _this.CONSUME(Tokens_1.NULL);\n                    }\n                },\n                {\n                    ALT: function () {\n                        _this.CONSUME2(Tokens_1.IDENTIFIER);\n                    }\n                }\n            ]);\n        }",
+    "orgText": "function () {\n      let isFunctionPermited = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;\n      $.OR([{\n        GATE: isFunctionPermited,\n        ALT: () => {\n          $.SUBRULE($.functionCall);\n        }\n      }, {\n        ALT: () => {\n          $.CONSUME(_Tokens.NUMBER_LITERAL);\n        }\n      }, {\n        ALT: () => {\n          $.CONSUME(_Tokens.STRING_LITERAL);\n        }\n      }, {\n        ALT: () => {\n          $.CONSUME(_Tokens.TRUE);\n        }\n      }, {\n        ALT: () => {\n          $.CONSUME(_Tokens.FALSE);\n        }\n      }, {\n        ALT: () => {\n          $.CONSUME(_Tokens.NULL);\n        }\n      }, {\n        ALT: () => {\n          $.CONSUME2(_Tokens.IDENTIFIER);\n        }\n      }]);\n    }",
     "definition": [
       {
         "type": "Alternation",
@@ -234,7 +234,7 @@
   {
     "type": "Rule",
     "name": "binaryOperator",
-    "orgText": "function () {\n            _this.OR([\n                {\n                    ALT: function () {\n                        _this.CONSUME(Tokens_1.ADDITIVE_OPERATOR);\n                    }\n                },\n                {\n                    ALT: function () {\n                        _this.CONSUME(Tokens_1.MULTIPLICATIVE_OPERATOR);\n                    }\n                }\n            ]);\n        }",
+    "orgText": "() => {\n      $.OR([{\n        ALT: () => {\n          $.CONSUME(_Tokens.ADDITIVE_OPERATOR, {\n            LABEL: \"operator\"\n          });\n        }\n      }, {\n        ALT: () => {\n          $.CONSUME(_Tokens.MULTIPLICATIVE_OPERATOR, {\n            LABEL: \"operator\"\n          });\n        }\n      }]);\n    }",
     "definition": [
       {
         "type": "Alternation",
@@ -271,7 +271,7 @@
   {
     "type": "Rule",
     "name": "functionCall",
-    "orgText": "function () {\n            _this.CONSUME(Tokens_1.IDENTIFIER);\n            _this.CONSUME(Tokens_1.L_PAREN);\n            _this.MANY_SEP({\n                SEP: Tokens_1.COMMA,\n                DEF: function () {\n                    // console.log(this.LA(2));\n                    _this.SUBRULE(_this.expression);\n                }\n            });\n            _this.CONSUME(Tokens_1.R_PAREN);\n        }",
+    "orgText": "() => {\n      $.CONSUME(_Tokens.IDENTIFIER);\n      $.CONSUME(_Tokens.L_PAREN);\n      $.MANY_SEP({\n        SEP: _Tokens.COMMA,\n        DEF: () => {\n          $.SUBRULE($.expression, {\n            LABEL: \"functionArguments\"\n          });\n        }\n      });\n      $.CONSUME(_Tokens.R_PAREN);\n    }",
     "definition": [
       {
         "type": "Terminal",
