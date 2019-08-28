@@ -27,6 +27,7 @@ import {
   RETURN_WORD,
   WHITE_SPACE,
   IDENTIFIER,
+  MODULE,
   ALL_TOKENS
 } from "./Tokens";
 
@@ -40,6 +41,8 @@ export default class PRTParser extends CstParser {
     const $ = this;
 
     $.RULE("program", () => {
+      $.CONSUME(MODULE);
+      $.CONSUME(IDENTIFIER, { LABEL: "moduleName" });
       $.MANY(() => {
         $.SUBRULE($.declaration);
       });
@@ -116,12 +119,12 @@ export default class PRTParser extends CstParser {
       $.OR([
         {
           ALT: () => {
-            $.CONSUME(ADDITIVE_OPERATOR, { LABEL: "operator"});
+            $.CONSUME(ADDITIVE_OPERATOR, { LABEL: "operator" });
           }
         },
         {
           ALT: () => {
-            $.CONSUME(MULTIPLICATIVE_OPERATOR, { LABEL: "operator"});
+            $.CONSUME(MULTIPLICATIVE_OPERATOR, { LABEL: "operator" });
           }
         }
       ]);
