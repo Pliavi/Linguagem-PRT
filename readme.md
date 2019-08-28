@@ -49,12 +49,7 @@ public int fatorial_recursivo(int n) {
 
 Fatorial recursivo em _PRT_:
 ```PRT
-# Com IF
-fatorial(n) retorna 
-	se n > 1 então n * fatorial(n-1) 
-			 senão 1
-
 # Ou usando casamento de padrões
-fatorial(n) retorna n * fatorial(n-1)
 fatorial(1) retorna 1
+fatorial(n) retorna n * fatorial(n-1)
 ```
