@@ -23,8 +23,22 @@
   {
     "type": "Rule",
     "name": "program",
-    "orgText": "() => {\n      $.MANY(() => {\n        $.SUBRULE($.declaration);\n      });\n    }",
+    "orgText": "() => {\n      $.CONSUME(_Tokens.MODULE);\n      $.CONSUME(_Tokens.IDENTIFIER, {\n        LABEL: \"moduleName\"\n      });\n      $.MANY(() => {\n        $.SUBRULE($.declaration);\n      });\n    }",
     "definition": [
+      {
+        "type": "Terminal",
+        "name": "MODULE",
+        "label": "MODULE",
+        "idx": 0,
+        "pattern": "m[óo]dulo"
+      },
+      {
+        "type": "Terminal",
+        "name": "IDENTIFIER",
+        "label": "IDENTIFIER",
+        "idx": 0,
+        "pattern": "[a-zA-z_]\\w*"
+      },
       {
         "type": "Repetition",
         "idx": 0,
