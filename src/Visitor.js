@@ -1,43 +1,44 @@
 import BaseVisitor from "./BaseVisitor";
 
 export default class Visitor extends BaseVisitor {
-
   constructor() {
     super();
     this.validateVisitor();
-    this.functions = [];
+    this.functions = {};
     this.deep = 0;
   }
 
   program(ctx) {
-    const program = this.visitAll(ctx.declaration);
+    const moduleName = this.getImage(ctx.moduleName);
+    this.visitAll(ctx.declaration);
 
-    return this.functions;
+    return this.generate(moduleName, this.functions);
   }
 
   declaration(ctx) {
-    const id = this.getImage(ctx.functionName);
+    const functionName = this.getImage(ctx.functionName);
     const params = this.visitAll(ctx.params);
     const body = this.visit(ctx.body);
+    const arity = params.length;
 
-    const params_definition = {
-      arity: params.length,
-      params: params
-    }
-    
-    this.createOrPush(this.functions, id, { id, params_definition, body });
+    this.createOrPush(this.functions, functionName, {
+      identifier: `${functionName}`,
+      arity,
+      params,
+      body
+    });
   }
 
   expression(ctx) {
     const left = this.visit(ctx.left).image; // value
 
-    if(ctx.right){
-      const right = this.visit(ctx.right) // mathExpression
+    if (ctx.right) {
+      const right = this.visit(ctx.right); // mathExpression
 
-      return left + right
+      return left + right;
     }
 
-    return left
+    return left;
   }
 
   mathExpression(ctx) {
@@ -52,49 +53,49 @@ export default class Visitor extends BaseVisitor {
   }
 
   value(ctx) {
-    if(ctx.functionCall) {
+    if (ctx.functionCall) {
       return {
         type: "function",
         image: this.visit(ctx.functionCall)
       };
     }
-    
-    if(ctx.NUMBER_LITERAL) {
+
+    if (ctx.NUMBER_LITERAL) {
       return {
         type: "number",
         image: this.getImage(ctx.NUMBER_LITERAL)
       };
     }
-    
-    if(ctx.STRING_LITERAL) {
+
+    if (ctx.STRING_LITERAL) {
       return {
         type: "string",
         image: this.getImage(ctx.STRING_LITERAL)
       };
     }
-    
-    if(ctx.TRUE) {
+
+    if (ctx.TRUE) {
       return {
         type: "boolean",
         image: "true"
       };
     }
 
-    if(ctx.FALSE) {
+    if (ctx.FALSE) {
       return {
         type: "boolean",
         image: "false"
       };
     }
-    
-    if(ctx.NULL) {
+
+    if (ctx.NULL) {
       return {
         type: "null",
         image: "null"
       };
     }
-    
-    if(ctx.IDENTIFIER) {
+
+    if (ctx.IDENTIFIER) {
       return {
         type: "identifier",
         image: this.getImage(ctx.IDENTIFIER)
