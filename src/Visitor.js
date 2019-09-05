@@ -17,7 +17,10 @@ export default class Visitor extends BaseVisitor {
 
   declaration(ctx) {
     const functionName = this.getImage(ctx.functionName);
-    const params = this.visitAll(ctx.params);
+    const params = this.visitAll(ctx.params).map((param, id) => ({
+      ...param,
+      id
+    }));
     const body = this.visit(ctx.body);
     const arity = params.length;
 
@@ -52,7 +55,7 @@ export default class Visitor extends BaseVisitor {
     return this.getImage(ctx.operator);
   }
 
-  value(ctx) {
+  value(ctx, params = {}) {
     if (ctx.functionCall) {
       return {
         type: "function",

@@ -1,28 +1,31 @@
 function Matematico() {
-      if(params.length == 1) {
-        return fatorial0(params);
-      }
-    
-      const fatorial0 = params => {
-        const 1 = params[0];
+function fatorial() {
+      function fatorial0(params) {
+        
         return 1;
       }
     
-      if(params.length == 1) {
-        return fatorial1(params);
+      if(arguments.length == 1 && arguments[0] == 1){
+        return fatorial0(arguments);
       }
     
-      const fatorial1 = params => {
+      function fatorial1(params) {
         const n = params[0];
         return n*fatorial(n-1);
       }
     
-      if(params.length == 0) {
-        return principal0(params);
+      if(arguments.length == 1 ){
+        return fatorial1(arguments);
       }
-    
-      const principal0 = params => {
+    };function principal() {
+      function principal0(params) {
         
         return fatorial(10);
       }
+    
+      if(arguments.length == 0 ){
+        return principal0(arguments);
+      }
+    };
+    return {fatorial,principal}
     }

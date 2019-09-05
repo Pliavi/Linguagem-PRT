@@ -39,14 +39,6 @@ export default class Visitor extends BaseVisitor {
     */
 
     function fatorial(params) {
-      if (params.length == 1 && params[0] == 1) {
-        return fatorial_0(params);
-      }
-
-      if (params.length == 1) {
-        return fatorial_1(params);
-      }
-
       const fatorial_0 = params => {
         return 1;
       };
@@ -54,20 +46,39 @@ export default class Visitor extends BaseVisitor {
       const fatorial_1 = params => {
         return params[0] * fatorial([params[0] - 1]);
       };
+
+      if (params.length == 1 && params[0] == 1) {
+        return fatorial_0(params);
+      }
+
+      if (params.length == 1) {
+        return fatorial_1(params);
+      }
     }
   }
 
   generateFunctionMatching(functionNameWithId, arity, params) {
+    const onlyConstants = param => param.type !== "identifier";
+    const createMatching = ({ id, image }) => `arguments[${id}] == ${image}`;
+
+    let patternMatching = params
+      .filter(onlyConstants)
+      .map(createMatching)
+      .join("&&");
+
+    patternMatching = patternMatching && "&& " + patternMatching;
+
     return `
-      if(params.length == ${arity}) {
-        return ${functionNameWithId}(params);
+      if(arguments.length == ${arity} ${patternMatching}){
+        return ${functionNameWithId}(arguments);
       }
     `;
   }
 
   generateFunctionBody(functionNameWithId, params, body) {
-    const onlyLabels = () => param => param.type == "identifier";
+    const onlyLabels = param => param.type === "identifier";
     const createLabel = ({ image }, id) => `const ${image} = params[${id}];`;
+
     const renderLabels = params => {
       return params
         .filter(onlyLabels)
@@ -76,7 +87,7 @@ export default class Visitor extends BaseVisitor {
     };
 
     return `
-      const ${functionNameWithId} = params => {
+      function ${functionNameWithId}(params) {
         ${renderLabels(params)}
         return ${body};
       }
@@ -86,9 +97,12 @@ export default class Visitor extends BaseVisitor {
   // generateFunctionArity()()
 
   generate(moduleName, functions) {
-    let code = `function ${moduleName}() {`;
+    let exportedFunctions = [];
+    let code = `function ${moduleName}() {\n`;
 
     for (const functionName in functions) {
+      exportedFunctions.push(functionName);
+      code += `function ${functionName}() {`;
       if (functions.hasOwnProperty(functionName)) {
         const functionArities = functions[functionName];
 
@@ -97,25 +111,31 @@ export default class Visitor extends BaseVisitor {
             const functionNameWithId = identifier + id;
             let partial = "";
 
-            partial = this.generateFunctionMatching(
-              functionNameWithId,
-              arity,
-              params
-            );
-
             partial += this.generateFunctionBody(
               functionNameWithId,
               params,
               body
             );
 
+            partial += this.generateFunctionMatching(
+              functionNameWithId,
+              arity,
+              params
+            );
+
             return partial;
           })
           .join("");
       }
+      code += "};";
     }
 
-    // code = functions;
+    // code += `
+    //   return principal()}
+    // `;
+    code += `
+    return {${exportedFunctions.join(",")}}
+    `;
     return code + "}";
   }
 }
