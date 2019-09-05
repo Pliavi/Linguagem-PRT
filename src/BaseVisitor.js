@@ -134,8 +134,8 @@ export default class Visitor extends BaseVisitor {
     //   return principal()}
     // `;
     code += `
-    return {${exportedFunctions.join(",")}}
+    return {${exportedFunctions.join(",")}}}
     `;
-    return code + "}";
+    return `${code} \n ${moduleName}().principal()`;
   }
 }

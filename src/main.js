@@ -12,12 +12,15 @@ import * as babel from "@babel/core";
 import * as fs from "fs";
 
 const example = `
-  modulo Matematico
-  
-  fatorial(1) retorna 1
-  fatorial(n) retorna n * fatorial(n-1)
+modulo Matematico
+  identidade(n) retorna n
 
-  principal() retorna fatorial(10)
+  multiplicar(x, y) retorna x * y
+
+  fatorial(1) retorna identidade(1)
+  fatorial(n) retorna multiplicar(n, fatorial(n - 1))
+
+  principal() retorna fatorial(5)
 `;
 
 //const example = `
