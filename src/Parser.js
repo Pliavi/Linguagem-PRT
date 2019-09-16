@@ -34,10 +34,6 @@ import {
 export default class PRTParser extends CstParser {
   constructor(input) {
     super(ALL_TOKENS);
-    if (input) {
-      this.input = input;
-    }
-
     const $ = this;
 
     $.RULE("program", () => {
@@ -143,5 +139,8 @@ export default class PRTParser extends CstParser {
     });
 
     this.performSelfAnalysis();
+    if (input) {
+      this.input = input;
+    }
   }
 }
