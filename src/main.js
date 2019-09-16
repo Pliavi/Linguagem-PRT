@@ -22,5 +22,5 @@ window.parseCode = function(code) {
 
   const result = visitor.visit(cst);
 
-  return eval(result);
+  return result;
 };

@@ -18,16 +18,22 @@ modulo Fatorial
     </textarea>
 
     <h2>Resultado:</h2>
-    <textarea id="result" cols="80" rows="10"></textarea>
+    <textarea disabled id="result" cols="80" rows="5"></textarea>
+
+    <h2>Código gerado (Javascript)</h2>
+    <textarea disabled id="generatedCode" cols="80" rows="20"></textarea>
 
     <script src="./bundle.js"></script>
     <script>
       const getResult = ev => {
         const $result = document.getElementById("result");
         const $prtCode = document.getElementById("prtCode");
+        const $generatedCode = document.getElementById("generatedCode");
         try {
-          const evaluated = parseCode($prtCode.value);
-          $result.value = evaluated;
+          const compiled = parseCode($prtCode.value);
+          console.log(compiled);
+          $generatedCode.value = compiled;
+          $result.value = eval(compiled);
         } catch (err) {
           $result.value = err;
         }
