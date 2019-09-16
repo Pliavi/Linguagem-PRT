@@ -1,4 +1,5 @@
 import BaseVisitor from "./BaseVisitor";
+import * as Codegen from "./Codegen";
 
 export default class Visitor extends BaseVisitor {
   constructor() {
@@ -12,7 +13,7 @@ export default class Visitor extends BaseVisitor {
     const moduleName = this.getImage(ctx.moduleName);
     this.visitAll(ctx.declaration);
 
-    return this.generate(moduleName, this.functions);
+    return Codegen.generate(moduleName, this.functions);
   }
 
   declaration(ctx) {
