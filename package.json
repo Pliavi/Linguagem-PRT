@@ -1,20 +1,27 @@
 {
-  "name": "typescriptPRT",
+  "name": "prt_project",
   "version": "1.0.0",
-  "main": "main.js",
+  "private": true,
   "license": "MIT",
   "devDependencies": {
+    "@babel/cli": "^7.6.0",
     "@babel/node": "^7.4.5",
     "@babel/preset-env": "^7.4.5",
     "nodemon": "^1.19.1",
-    "typescript": "^3.5.2"
+    "typescript": "^3.5.2",
+    "webpack": "^4.40.2",
+    "webpack-cli": "^3.3.8"
   },
   "scripts": {
-    "start": "babel-node ./src/main.js",
-    "dev": "nodemon"
+    "dev:node": "babel-node ./src/node.js",
+    "dev": "nodemon",
+    "eslint": "eslint -f json pipe.js",
+    "build": "webpack"
   },
   "dependencies": {
     "@babel/core": "^7.4.5",
-    "chevrotain": "^4.8.1"
+    "babel-eslint": "^10.0.3",
+    "chevrotain": "^6.4.0",
+    "eslint": "^6.3.0"
   }
 }

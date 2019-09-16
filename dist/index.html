@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>PRTEditor</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/kognise/water.css@latest/dist/dark.min.css"
+    />
+  </head>
+  <body>
+    <h2>Escreva seu código PRT aqui:</h2>
+    <textarea id="prtCode" cols="80" rows="20">
+modulo Matematico
+  identidade(n) retorna n
+
+  multiplicar(x, y) retorna x * y
+
+  fatorial(1) retorna identidade(1)
+  fatorial(n) retorna multiplicar(n, fatorial(n - 1))
+
+  principal() retorna fatorial(5)
+    </textarea>
+
+    <h2>Resultado:</h2>
+    <textarea id="result" cols="80" rows="10"></textarea>
+
+    <script src="./bundle.js"></script>
+    <script>
+      const getResult = ev => {
+        const $result = document.getElementById("result");
+        const $prtCode = document.getElementById("prtCode");
+        try {
+          const evaluated = parseCode($prtCode.value);
+          $result.value = evaluated;
+        } catch (err) {
+          $result.value = err;
+        }
+      };
+
+      const $prtCode = document.getElementById("prtCode");
+      $prtCode.addEventListener("keypress", getResult);
+      $prtCode.addEventListener("load", getResult);
+    </script>
+  </body>
+</html>
