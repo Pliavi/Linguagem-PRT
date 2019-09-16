@@ -74,8 +74,9 @@ function addFunctions(functions) {
       functionsString += `
         function ${functionName}() {
           ${functionArities.map(addFunctionByArity).join("")}
-        }`;
-      functionsString += `throw \`(Função ${functionName}/\${arguments.length} inexistente): A função ${functionName}, com \${arguments.length} argumentos não existe\``;
+        
+        throw \`(Função ${functionName}/\${arguments.length} inexistente): 
+        A aridade \${arguments.length} da função ${functionName} não existe\`}`;
     }
   }
 
