@@ -2,7 +2,7 @@
 
 One function may have one or more clauses, each one that do something different, and the first that match parameters with the arguments are executed.
 
-# How arguments will be matched?
+## How arguments will be matched?
 
 It will be in runtime, first of all it will need to check the arity, the `functionCall` function has a `args` variable as the last parameter, and it is an array, and the clauses of the function will be filtered by their sizes:
 
@@ -47,3 +47,19 @@ mostrarArquivo({"erro", erro}) retorna provocar(Nucleo.erro(erro))
 The `Arquivo.ler` returns a tuple with two values and it's matching it's content, but normally compare the value, but this is comparing, multiple values in a one deep level, but lists and tuples can be even deeper!
 
 So in the firsts versions of PRT it will only compare value, so it will be necessary to use some kind of conditional statement (like ifte or cond/switch), that will be implemented, but in with the same level, in only value level.
+The check would be something like that:
+
+```ts
+function takeMatchedClause(clauses: Array<Clause>, args: Array<any>) {
+  const paramsArgsEquals = ({ type, value }, index) =>
+    type === "value" && value == args[index];
+
+  for (clause of clauses) {
+    const matched = clause.paramList.every(paramsArgsEquals);
+
+    if (matched) return clause;
+  }
+
+  throw `Nenhuma clausula bate com os argumentos: ${args}`;
+}
+```

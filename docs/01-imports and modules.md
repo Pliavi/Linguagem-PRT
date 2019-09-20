@@ -35,7 +35,7 @@ const globals =
     imports: {
       $module_0: PRTModule,
       $module_1: PRTModule,
-      ...
+      ... // modules are added by name
     },
     callFunction: () => {}
   }
