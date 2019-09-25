@@ -4,6 +4,7 @@
 
 #### [Teste a primeira versão funcional aqui!!](https://pliavi.github.io/Linguagem-PRT/dist/index.html)
 
+<!--
 Linguagem de programação em português para aprendizado do paradigma funcional
 
 <!-- ## Funções de alta ordem
@@ -21,7 +22,7 @@ fim
 aplicar_para(10, somar(5)) # 15
 ``` -->
 
-## Recursividade
+<!-- ## Recursividade
 
 Recursividade é uma das características principais da linguagem funcional. Ela define que uma função pode chamar ela mesma quantas vezes forem necessárias, em linguagens funcionais essa estrutura substitui a utilização de laços de repetição, como _for_ (para) e _while_ (enquanto), das linguagens estruturadas.
 
@@ -60,4 +61,4 @@ Fatorial recursivo em _PRT_:
 # Ou usando casamento de padrões
 fatorial(1) retorna 1
 fatorial(n) retorna n * fatorial(n-1)
-```
+``` -->
