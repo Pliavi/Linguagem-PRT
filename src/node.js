@@ -1,9 +1,9 @@
 import { inspect } from "util";
-import { ALL_TOKENS } from "./Tokens";
+import { ALL_TOKENS } from "../lib/Tokens";
 import { Lexer as PRTLexer } from "chevrotain";
-import PRTParser from "./Parser";
-import generateDiagram from "./lib/generateDiagram";
-import Visitor from "./Visitor";
+import PRTParser from "./parser/Parser";
+import generateDiagram from "../lib/generateDiagram";
+import Visitor from "./parser/Visitor";
 import * as fs from "fs";
 
 const example = `
