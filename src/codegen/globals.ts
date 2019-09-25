@@ -11,20 +11,6 @@ export const createGlobal: Function = (module: PRTModule): Globals => ({
   imports: new Map()
 });
 
-function extractModule({ main, imports }: Globals, moduleName: string) {
-  const isMain = moduleName === null || moduleName === undefined;
-
-  if (isMain) {
-    return main;
-  }
-
-  if (imports.has(moduleName)) {
-    return imports.get(moduleName);
-  }
-
-  throw `${moduleName} não existe`;
-}
-
 export function callFunction(
   globals: Globals,
   { moduleName, functionName }: Caller,
@@ -35,11 +21,23 @@ export function callFunction(
   if (moduleFunctions.has(functionName)) {
     const functionClauses = moduleFunctions.get(functionName).clauses;
     const arityFilteredClauses = filterByArity(functionClauses, args.length);
-    const matchedClause = takeMatchedClause(arityFilteredClauses, args);
+    const matchedClause = takeMatchingClause(arityFilteredClauses, args);
 
-    // Actually call the matched function clause with the actual arguments
     return matchedClause.call(args);
   }
+}
+
+/* Helper functions */
+function extractModule({ main, imports }: Globals, moduleName: string) {
+  const isMain = moduleName === null || moduleName === undefined;
+
+  if (isMain) return main;
+
+  if (imports.has(moduleName)) {
+    return imports.get(moduleName);
+  }
+
+  throw `${moduleName} não existe`;
 }
 
 function filterByArity(clauses: Array<Clause>, arity: number) {
@@ -52,7 +50,7 @@ function filterByArity(clauses: Array<Clause>, arity: number) {
   throw `Aridade não encontrada para a função`;
 }
 
-function takeMatchedClause(clauses: Array<Clause>, args: Array<any>) {
+function takeMatchingClause(clauses: Array<Clause>, args: Array<any>) {
   for (const clause of clauses) {
     const matched = clause.paramList.every(
       ({ type, value }, index) =>
