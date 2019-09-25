@@ -29,7 +29,7 @@ import {
   IDENTIFIER,
   MODULE,
   ALL_TOKENS
-} from "../../lib/Tokens";
+} from "./Tokens";
 
 export default class PRTParser extends CstParser {
   constructor(input) {

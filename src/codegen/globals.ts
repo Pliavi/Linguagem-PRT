@@ -1,4 +1,10 @@
-import { Globals, PRTModule, Clause, ParameterType, Caller } from "lib/types";
+import {
+  Globals,
+  PRTModule,
+  Clause,
+  ParameterType,
+  Caller
+} from "src/compiler/types";
 
 export const createGlobal: Function = (module: PRTModule): Globals => ({
   main: module,

@@ -1,4 +1,4 @@
-import BaseVisitor from "../../lib/BaseVisitor";
+import BaseVisitor from "./BaseVisitor";
 import * as Codegen from "./Codegen";
 
 export default class Visitor extends BaseVisitor {

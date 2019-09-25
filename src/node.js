@@ -1,8 +1,8 @@
 import { inspect } from "util";
-import { ALL_TOKENS } from "../lib/Tokens";
+import { ALL_TOKENS } from "./compiler/Tokens";
 import { Lexer as PRTLexer } from "chevrotain";
 import PRTParser from "./parser/Parser";
-import generateDiagram from "../lib/generateDiagram";
+import generateDiagram from "./compiler/generateDiagram";
 import Visitor from "./parser/Visitor";
 import * as fs from "fs";
 

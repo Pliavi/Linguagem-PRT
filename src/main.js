@@ -1,4 +1,4 @@
-import { ALL_TOKENS } from "../lib/Tokens";
+import { ALL_TOKENS } from "./compiler/Tokens";
 import { Lexer as PRTLexer } from "chevrotain";
 import PRTParser from "./parser/Parser";
 import Visitor from "./parser/Visitor";
