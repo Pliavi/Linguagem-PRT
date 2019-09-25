@@ -7,7 +7,7 @@ One function may have one or more clauses, each one that do something different,
 It will be in runtime, first of all it will need to check the arity, the `functionCall` function has a `args` variable as the last parameter, and it is an array, and the clauses of the function will be filtered by their sizes:
 
 ```ts
-function filterByArity(clauses: array<Clause>, arity: number) {
+function filterByArity(clauses: Array<Clause>, arity: number) {
   return clauses.filter(clause => arity === clause.paramList.length);
 }
 ```
@@ -51,10 +51,11 @@ The check would be something like that:
 
 ```ts
 function takeMatchedClause(clauses: Array<Clause>, args: Array<any>) {
-  const paramsArgsEquals = ({ type, value }, index) =>
-    type === "value" && value == args[index];
+  const paramsArgsEquals = ({ type, value }, index) => {
+    return type === "value" && value == args[index];
+  };
 
-  for (clause of clauses) {
+  for (const clause of clauses) {
     const matched = clause.paramList.every(paramsArgsEquals);
 
     if (matched) return clause;
