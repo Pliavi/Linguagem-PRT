@@ -1,4 +1,4 @@
-import Helper from "./lib/helper";
+import Helper from "../lib/helper";
 
 const exports = [];
 
