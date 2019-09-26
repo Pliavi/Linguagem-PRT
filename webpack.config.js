@@ -12,13 +12,13 @@ module.exports = {
     ]
   },
   resolve: {
-    extensions: [".tsx", ".ts", ".js"],
-    alias: {
-      lib: path.resolve(__dirname, "./lib")
-    }
+    extensions: [".tsx", ".ts", ".js"]
   },
   output: {
     filename: "bundle.js",
     path: path.resolve(__dirname, "dist")
+  },
+  node: {
+    fs: "empty"
   }
 };

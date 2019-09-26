@@ -5,11 +5,8 @@
     "module": "es6",
     "target": "es6",
     "allowJs": true,
-    "baseUrl": "./",
-    "paths": {
-      "lib/*": ["lib/*"],
-      "doc/*": ["doc/*"]
-    }
+    "baseUrl": ".",
+    "moduleResolution": "node"
   },
   "exclude": ["node_modules", "dist"]
 }
