@@ -1,4 +1,4 @@
-import Parser from "../src/parser/Parser";
+import Parser from "./Parser";
 
 const parserInstance = new Parser();
 const BaseVisitor = parserInstance.getBaseCstVisitorConstructor();

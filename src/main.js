@@ -1,7 +1,7 @@
 import { ALL_TOKENS } from "./compiler/Tokens";
 import { Lexer as PRTLexer } from "chevrotain";
-import PRTParser from "./parser/Parser";
-import Visitor from "./parser/Visitor";
+import PRTParser from "./compiler/Parser";
+import Visitor from "./compiler/Visitor";
 
 window.PRT = {};
 window.parseCode = function(code) {
@@ -21,6 +21,7 @@ window.parseCode = function(code) {
   }
 
   const result = visitor.visit(cst);
+  console.log(result);
 
   return result;
 };
